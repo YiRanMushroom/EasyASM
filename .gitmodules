@@ -1,0 +1,12 @@
+[submodule "vendor/LuaJIT"]
+	path = vendor/LuaJIT
+	url = https://github.com/WohlSoft/LuaJIT
+	branch = v2.1
+[submodule "vendor/yaml-cpp"]
+	path = vendor/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
+	branch = master
+[submodule "vendor/sol2"]
+	path = vendor/sol2
+	url = https://github.com/YiRanMushroom/sol2
+	branch = main
