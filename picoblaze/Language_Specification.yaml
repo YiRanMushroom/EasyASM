@@ -1,0 +1,10 @@
+PerInstructionBits: 8
+
+MacroDefineTokens: [
+  "CONSTANT"
+]
+
+InstructionToLuaFunctionNameMap: {
+    "ADD": "ProcessAdd",
+    "SUB": "ProcessSub",
+}
