@@ -1,10 +1,8 @@
 export module Core.SourceElements.Token;
 
 import std;
+import Vendor.sol;
 
-namespace YAML {
-    struct Token;
-}
 
 namespace Core::SourceElements {
     export class Token {
@@ -21,6 +19,8 @@ namespace Core::SourceElements {
 
         Token(std::string content)
             : m_Content(std::move(content)) {}
+
+        static void AddLibToState(sol::state& state);
 
     private:
         std::string m_Content;
