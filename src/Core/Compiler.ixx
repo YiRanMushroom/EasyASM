@@ -5,56 +5,83 @@ export module Core.Compiler;
 import std;
 import Vendor.yaml;
 import Vendor.sol;
-export import Core.SourceElements.Token;
-export import Core.ASMElements.InstructionBinary;
+import Core.Parser;
+import Core.Exceptions;
 
 namespace Core {
-    export class SourceCompiler {
+    export class SourceCompiler;
+    export class Compiler;
+
+    class SourceCompiler {
     private:
-        SourceCompiler() = default;
+
+        friend class Compiler;
 
     public:
-        SourceCompiler(size_t perInstructionBits,
-                       std::shared_ptr<const std::unordered_map<SourceElements::Token,
-                           SourceElements::Token>> preProcessorTokenMap,
-                       std::shared_ptr<const std::unordered_map<SourceElements::Token,
+        SourceCompiler(
+            std::shared_ptr<sol::state> sharedState,
+                       std::shared_ptr<const std::unordered_map<std::string,
                            std::function<
-                               std::expected<ASMElements::InstructionBinary, std::string>
-                               (const std::span<SourceElements::Token> &)>>> instructionProcessorMap,
-                       std::shared_ptr<const std::unordered_set<SourceElements::Token>> macroDefineTokens)
-            : m_PerInstructionBits(perInstructionBits),
-              m_PreProcessorTokenMap(std::move(preProcessorTokenMap)),
-              m_InstructionProcessorMap(std::move(instructionProcessorMap)),
-              m_MacroDefineTokens(std::move(macroDefineTokens)) {
+                               void(SourceCompiler&)
+                               >>> instructionProcessorMap,
+                       std::string source)
+            : m_SharedState(std::move(sharedState)),
+                m_InstructionProcessorMap(std::move(instructionProcessorMap)),
+                m_TokenStream(std::move(source)) {
         }
 
         static void AddLibToState(sol::state& state);
 
     public:
-        size_t m_PerInstructionBits;
-        // std::shared_ptr<const sol::state> m_SharedState;
-        std::shared_ptr<const std::unordered_map<SourceElements::Token,
-            SourceElements::Token>> m_PreProcessorTokenMap;
+        sol::table GetCompilerContext() const {
+            return m_CompilerContext;
+        }
 
-        std::shared_ptr<const std::unordered_set<SourceElements::Token>>
-        m_MacroDefineTokens;
+        sol::table GetLinkerContext() const {
+            return m_LinkerContext;
+        }
+
+        TokenStream& GetTokenStream() {
+            return m_TokenStream;
+        }
+
+    public:
+        std::vector<bool>& GetBitBuffer() {
+            return m_BitBuffer;
+        }
+
+        void WriteBit(bool bit);
+        void WriteBits(const std::vector<bool>& bits);
+        void WriteNumber(uint64_t number, size_t bits);
+        size_t GetBitBufferSize() const;
+
+        void CompileOneLine();
+
+    public:
+        std::shared_ptr<sol::state> m_SharedState;
 
         std::shared_ptr<const std::unordered_map<
-        SourceElements::Token,
-        std::function<std::expected<ASMElements::InstructionBinary, std::string>(
-        std::span<SourceElements::Token> const &)>>>
-        m_InstructionProcessorMap;
+        std::string,
+        std::function<void(SourceCompiler&)>>> m_InstructionProcessorMap;
+
+        sol::table m_CompilerContext;
+        sol::table m_LinkerContext;
+        TokenStream m_TokenStream;
+
+        std::vector<bool> m_BitBuffer;
     };
 
-    export class Compiler {
+    class Compiler {
     public:
         Compiler(const std::filesystem::path &languageRootDir);
+
+        friend class SourceCompiler;
 
     private:
         static std::shared_ptr<sol::state> CreateSharedState();
         void InitParticularState(std::filesystem::directory_iterator languageRootDir);
-        void InitNameToFuntionMap(const YAML::Node &config);
-        void InitMacroDefineTokens(const YAML::Node &config);
+        void InitNameToFunctionMap(const YAML::Node &config);
+        void InitLinker(const YAML::Node &config);
 
     public:
         template<typename ExpectedType>
@@ -70,18 +97,17 @@ namespace Core {
         static std::optional<ExpectedType> ParseConfigOptional(const YAML::Node &config,
                                                                const auto &... keys);
 
-        size_t m_PerInstructionBits;
+        [[nodiscard]] SourceCompiler CreateSourceCompiler(std::string) const;
 
+    private:
         std::shared_ptr<sol::state> m_SharedState;
 
-        std::shared_ptr<const std::unordered_set<SourceElements::Token>>
-        m_MacroDefineTokens;
-
         std::shared_ptr<const std::unordered_map<
-            SourceElements::Token,
-            std::function<std::expected<ASMElements::InstructionBinary, std::string>(
-                std::span<SourceElements::Token> const &)>>>
-        m_InstructionProcessorMap;
+            std::string,
+            std::function<void(SourceCompiler&)>>>
+            m_InstructionProcessorMap;
+
+        std::function<void(SourceCompiler&)> m_Linker;
     };
 
     template<typename ExpectedType>

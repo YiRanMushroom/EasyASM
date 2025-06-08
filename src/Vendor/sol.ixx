@@ -1,2 +1,2 @@
 export module Vendor.sol;
-export import <sol/sol.hpp>;
+export import "sol2_build.h";

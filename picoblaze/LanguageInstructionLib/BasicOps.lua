@@ -1,13 +1,5 @@
-function ProcessAdd(tokens)
-    for i = 1, #tokens do
-        print(tokens[i]:GetContent())
-    end
-
-    if #tokens <= 2 then
-        return "Error: Not enough arguments for 'add' command."
-    end
-
-    return InstructionBinary.new(8)
+function ProcessAdd(compiler)
+    Exception.ThrowCompilerImplementationError("Test throw")
 end
 
 function ProcessSub(tokens)

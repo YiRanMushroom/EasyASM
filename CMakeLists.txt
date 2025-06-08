@@ -16,11 +16,7 @@ file(GLOB_RECURSE MODULE_FILES "src/*.ixx" "src/*.cppm")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp" "src/*.cxx")
 file(GLOB_RECURSE HEADER_FILES "src/*.h" "src/*.hpp")
 
-add_executable(${PROJECT_NAME} ${MODULE_FILES} ${SOURCE_FILES} ${HEADER_FILES}
-        src/Vendor/sol.ixx
-        src/Vendor/yaml.ixx
-        src/Core/Compiler.ixx
-        src/Core/SourceElements/Token.ixx)
+add_executable(${PROJECT_NAME} ${MODULE_FILES} ${SOURCE_FILES} ${HEADER_FILES})
 
 target_sources(
         ${PROJECT_NAME}
@@ -37,6 +33,12 @@ SET(SOL2_LUA_VERSION "luajit-2.1.0")
 add_subdirectory(vendor/sol2)
 
 add_subdirectory(vendor/yaml-cpp)
+
+target_compile_definitions(
+        ${PROJECT_NAME}
+        PUBLIC
+        SOL_EXCEPTIONS_SAFE_PROPAGATION
+)
 
 target_link_libraries(
         ${PROJECT_NAME}
