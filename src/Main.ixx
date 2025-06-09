@@ -9,7 +9,7 @@ import std;
 
 export int main() {
     std::filesystem::path picoblazeRootDir = "../../picoblaze";
-    auto sourceFile = std::ifstream("../../tests/test_compile_psm.psm");
+    auto sourceFile = std::ifstream("../../tests/pracPICO.psm");
     std::string source((std::istreambuf_iterator<char>(sourceFile)),
                  std::istreambuf_iterator<char>());
     try {

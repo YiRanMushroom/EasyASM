@@ -19,10 +19,10 @@ address 009
     disable interrupt
     enable interrupt
     fetch s1, cbb1
-    input s1, 0
-    load s1, 0
+    input s1, 00
+    load s1, 00
     or s1, s2
-    output s1, 0
+    output s1, 00
     return
     return c
     return nc
@@ -39,7 +39,7 @@ address 009
     sr1 s1
     sra s2
     srx s3
-    store s1, 0
+    store s1, 00
     sub s1, s2
     subcy s2, s1
     test s1, s2
