@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 23)
 if (NOT MSVC)
     error("This project requires MSVC compiler.")
 else ()
-# use multi-threaded static runtime
+# use multi-threaded static runtime, this could be necessary for some libraries
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif ()
 
