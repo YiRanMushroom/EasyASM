@@ -1,7 +1,7 @@
 function ProcessAdd(compiler)
-    return Exception.MakeCompilerImplementationError(
-        "Add operation is not supported in this version of the compiler."
-    )
+--     return Exception.MakeCompilerImplementationError(
+--         "Add operation is not supported in this version of the compiler."
+--     )
 end
 
 function ProcessSub(tokens)

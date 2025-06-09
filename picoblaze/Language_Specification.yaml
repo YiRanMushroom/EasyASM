@@ -10,3 +10,4 @@ InstructionToLuaFunctionNameMap: {
 }
 
 NonInstructionHandlerName: "ProcessNonInstruction"
+LinkerName: "Linker"

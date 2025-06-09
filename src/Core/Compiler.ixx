@@ -24,9 +24,11 @@ namespace Core {
                            std::function<
                                void(SourceCompiler&)
                                >>> instructionProcessorMap,
+                               std::function<void(SourceCompiler&)> linker,
                        std::string source)
             : m_SharedState(std::move(sharedState)),
                 m_InstructionProcessorMap(std::move(instructionProcessorMap)),
+                m_Linker(std::move(linker)),
                 m_TokenStream(std::move(source)) {
         }
 
@@ -57,12 +59,16 @@ namespace Core {
 
         bool CompileOneLine();
 
+        void Link();
+
     public:
         std::shared_ptr<sol::state> m_SharedState;
 
         std::shared_ptr<const std::unordered_map<
         std::string,
         std::function<void(SourceCompiler&)>>> m_InstructionProcessorMap;
+
+        std::function<void(SourceCompiler&)> m_Linker;
 
         sol::table m_CompilerContext;
         sol::table m_LinkerContext;

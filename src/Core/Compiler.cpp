@@ -62,6 +62,10 @@ namespace Core {
         return false;
     }
 
+    void SourceCompiler::Link() {
+        m_Linker(*this);
+    }
+
     Compiler::Compiler(const std::filesystem::path &languageRootDir) {
         YAML::Node config{};
         try {
@@ -176,12 +180,24 @@ namespace Core {
                 .value_or("Linker");
 
         m_Linker = [linkerName](SourceCompiler &compiler) {
-            const auto &state = *compiler.m_SharedState;
-            sol::function linkerFunction = state[linkerName];
-            if (!linkerFunction.valid()) {
+            sol::function function = compiler.m_SharedState->get<sol::function>(linkerName);
+            if (!function.valid()) {
                 throw std::runtime_error("Linker function not found: " + linkerName);
             }
-            linkerFunction(compiler);
+            auto exception = function(compiler);
+            if (!exception.valid()) {
+                sol::error err = exception;
+                throw std::runtime_error(
+                    "Error executing linker '" + linkerName + "': " +
+                    std::string(err.what()));
+            } else {
+                sol::type resultType = exception.get_type();
+                if (resultType != sol::type::nil) {
+                    if (resultType == sol::lua_type_of_v<Exceptions::WrappedGenericException>) {
+                        exception.get<Exceptions::WrappedGenericException>().ThrowIfNotNull();
+                    }
+                }
+            }
         };
     }
 
@@ -189,7 +205,8 @@ namespace Core {
         return SourceCompiler{
             m_SharedState,
             m_InstructionProcessorMap,
-            std::move(source)
+            m_Linker,
+            std::move(source),
         };
     }
 }

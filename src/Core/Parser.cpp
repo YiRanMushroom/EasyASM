@@ -7,25 +7,31 @@ namespace Core {
     const static std::unordered_set<char> delimiters = {'(', ')', '{', '}', '[', ']', ',', ';', ':', '\"', '\''};
 
     std::optional<std::string> TokenStream::ParseCurrent() {
-        assert(current != source.end() && !whitespace.contains(*current) && "Current character should not be whitespace");
-
         if (current == source.end()) {
             return std::nullopt; // no more tokens
         }
-        std::string buffer; // small string optimization should be enough for most tokens
+
+        assert(!whitespace.contains(*current) && "Current character should not be whitespace");
 
         if (*current == '\"') {
             return ParseString();
         }
+
+        if (delimiters.contains(*current)) {
+            std::string delimiter(1, *current); // create a string from the single character
+            ++current; // move past the delimiter
+            SkipToNextToken(); // skip to the next token
+            return delimiter; // return the parsed delimiter
+        }
+
+        std::string buffer; // small string optimization should be enough for most tokens
 
         while (current != source.end() && !whitespace.contains(*current) && !delimiters.contains(*current)) {
             buffer += *current;
             ++current;
         }
 
-        if (buffer.empty()) {
-            return std::nullopt; // no token found
-        }
+        assert(!buffer.empty() && "Buffer should not be empty after parsing a token");
 
         SkipToNextToken();
 

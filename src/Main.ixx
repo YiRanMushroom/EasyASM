@@ -12,14 +12,16 @@ export int main() {
     std::string source = R"(
         ; Example Picoblaze source code
         TestNonIns
-        add 0, 1
+        add 0, 1, 2, 3, 4
     )";
     try {
         auto compiler = Core::Compiler{picoblazeRootDir};
 
         auto sourceCompiler = compiler.CreateSourceCompiler(source);
 
-        sourceCompiler.CompileOneLine();
+        while (!sourceCompiler.CompileOneLine());
+
+        sourceCompiler.Link();
 
     } catch (std::exception &e) {
         std::cerr << std::format("Compilation failed due to an error:\n{}\n",
