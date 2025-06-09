@@ -12,14 +12,14 @@ namespace Core {
         TokenStream::AddLibToState(state);
 
         state.new_usertype<SourceCompiler>("SourceCompiler",
-            "GetCompilerContext", &SourceCompiler::GetCompilerContext,
-            "GetLinkerContext", &SourceCompiler::GetLinkerContext,
-            "GetTokenStream", &SourceCompiler::GetTokenStream,
-            "GetBitBuffer", &SourceCompiler::GetBitBuffer,
-            "WriteBit", &SourceCompiler::WriteBit,
-            "WriteBits", &SourceCompiler::WriteBits,
-            "WriteNumber", &SourceCompiler::WriteNumber,
-            "GetBitBufferSize", &SourceCompiler::GetBitBufferSize
+                                           "GetCompilerContext", &SourceCompiler::GetCompilerContext,
+                                           "GetLinkerContext", &SourceCompiler::GetLinkerContext,
+                                           "GetTokenStream", &SourceCompiler::GetTokenStream,
+                                           "GetBitBuffer", &SourceCompiler::GetBitBuffer,
+                                           "WriteBit", &SourceCompiler::WriteBit,
+                                           "WriteBits", &SourceCompiler::WriteBits,
+                                           "WriteNumber", &SourceCompiler::WriteNumber,
+                                           "GetBitBufferSize", &SourceCompiler::GetBitBufferSize
         );
     }
 
@@ -46,43 +46,46 @@ namespace Core {
         return m_BitBuffer.size();
     }
 
-    void SourceCompiler::CompileOneLine() {
-        auto token = m_TokenStream.ParseCurrent();
+    bool SourceCompiler::CompileOneLine() {
+        auto token = m_TokenStream.PeekCurrent();
         if (!token)
-            return;
+            return true;
 
         auto unwrapped = std::move(token.value());
         if (!m_InstructionProcessorMap->contains(unwrapped)) {
-            assert(false && "Not Implemented");
+            m_InstructionProcessorMap->at("Compiler@NonInstructionHandler")(*this);
         } else {
+            m_TokenStream.SkipCurrent();
             m_InstructionProcessorMap->at(unwrapped)(*this);
         }
+
+        return false;
     }
 
-    Compiler::Compiler(const std::filesystem::path &languageRootDir)  {
-            YAML::Node config{};
-            try {
-                config = YAML::LoadFile((languageRootDir
-                                         / "Language_Specification.yaml").string());
-            } catch (std::exception &e) {
-                throw std::runtime_error("Failed to load configuration file");
-            }
-
-            // initialize state
-
-            m_SharedState = CreateSharedState();
-
-            std::string languageLoadPath =
-                ParseConfigOptional<std::string>(
-                config, "LanguageLoadPath").value_or("LanguageInstructionLib");
-
-            InitParticularState(std::filesystem::directory_iterator(
-                languageRootDir / languageLoadPath));
-
-            InitNameToFunctionMap(config);
-
-            InitLinker(config);
+    Compiler::Compiler(const std::filesystem::path &languageRootDir) {
+        YAML::Node config{};
+        try {
+            config = YAML::LoadFile((languageRootDir
+                                     / "Language_Specification.yaml").string());
+        } catch (std::exception &e) {
+            throw std::runtime_error("Failed to load configuration file");
         }
+
+        // initialize state
+
+        m_SharedState = CreateSharedState();
+
+        std::string languageLoadPath =
+                ParseConfigOptional<std::string>(
+                    config, "LanguageLoadPath").value_or("LanguageInstructionLib");
+
+        InitParticularState(std::filesystem::directory_iterator(
+            languageRootDir / languageLoadPath));
+
+        InitNameToFunctionMap(config);
+
+        InitLinker(config);
+    }
 
     std::shared_ptr<sol::state> Compiler::CreateSharedState() {
         auto state = std::make_shared<sol::state>(sol::state{});
@@ -94,7 +97,7 @@ namespace Core {
     }
 
     void Compiler::InitParticularState(std::filesystem::directory_iterator languageRootDir) {
-        for (const auto &luaSource : languageRootDir) {
+        for (const auto &luaSource: languageRootDir) {
             if (luaSource.is_regular_file() && luaSource.path().extension() == ".lua") {
                 m_SharedState->script_file(luaSource.path().string());
             }
@@ -103,50 +106,77 @@ namespace Core {
 
     void Compiler::InitNameToFunctionMap(const YAML::Node &config) {
         std::unordered_map<std::string, std::string> instructionToLuaFunctionNameMap
-                    = ParseConfigOrThrow<std::unordered_map<std::string, std::string>>(
-                        config, "InstructionToLuaFunctionNameMap");
+                = ParseConfigOrThrow<std::unordered_map<std::string, std::string>>(
+                    config, "InstructionToLuaFunctionNameMap");
 
-                std::unordered_map<
-                    std::string,
-                    std::function<void(SourceCompiler&)>> instructionProcessorMap;
+        std::unordered_map<
+            std::string,
+            std::function<void(SourceCompiler &)>> instructionProcessorMap;
 
-                for (auto&& [key, value] : std::move(instructionToLuaFunctionNameMap)) {
-                    instructionProcessorMap[Core::Lib::ToLowerCase(key)] =
-                        [value, sharedState = m_SharedState](
-                            SourceCompiler &compiler) {
-                            sol::function function = sharedState->get<sol::function>(value);
-                            if (!function.valid()) {
-                                throw std::runtime_error("Function not found: " + value);
-                            }
-                            auto exception = function(compiler);
-                            if (!exception.valid()) {
-                                sol::error err = exception;
-                                throw std::runtime_error(
-                                    "Error executing function '" + value + "': " +
-                                    std::string(err.what()));
-                            } else {
-                                sol::type resultType = exception.get_type();
-                                if (resultType != sol::type::nil) {
-                                    if (resultType == sol::lua_type_of_v<Exceptions::WrappedGenericException>) {
-                                        exception.get<Exceptions::WrappedGenericException>().ThrowIfNotNull();
-                                    }
+        for (auto &&[key, value]: std::move(instructionToLuaFunctionNameMap)) {
+            instructionProcessorMap[Core::Lib::ToLowerCase(key)] =
+                    [value, sharedState = m_SharedState](
+                SourceCompiler &compiler) {
+                        sol::function function = sharedState->get<sol::function>(value);
+                        if (!function.valid()) {
+                            throw std::runtime_error("Function not found: " + value);
+                        }
+                        auto exception = function(compiler);
+                        if (!exception.valid()) {
+                            sol::error err = exception;
+                            throw std::runtime_error(
+                                "Error executing function '" + value + "': " +
+                                std::string(err.what()));
+                        } else {
+                            sol::type resultType = exception.get_type();
+                            if (resultType != sol::type::nil) {
+                                if (resultType == sol::lua_type_of_v<Exceptions::WrappedGenericException>) {
+                                    exception.get<Exceptions::WrappedGenericException>().ThrowIfNotNull();
                                 }
                             }
-                        };
-                }
+                        }
+                    };
+        }
 
-                m_InstructionProcessorMap =
-                    std::make_shared<const std::unordered_map<
-                        std::string,
-                        std::function<void(SourceCompiler&)>>>(std::move(instructionProcessorMap));
+        std::string NonInstructionHandlerName =
+                ParseConfigOptional<std::string>(config, "NonInstructionHandlerName")
+                        .value_or("ProcessNonInstruction");
+
+        instructionProcessorMap["Compiler@NonInstructionHandler"] =
+            [NonInstructionHandlerName, sharedState = m_SharedState](
+                SourceCompiler &compiler) {
+                sol::function function = sharedState->get<sol::function>(NonInstructionHandlerName);
+                if (!function.valid()) {
+                    throw std::runtime_error("Function not found: " + NonInstructionHandlerName);
+                }
+                auto exception = function(compiler);
+                if (!exception.valid()) {
+                    sol::error err = exception;
+                    throw std::runtime_error(
+                        "Error executing non-instruction handler '" + NonInstructionHandlerName + "': " +
+                        std::string(err.what()));
+                } else {
+                    sol::type resultType = exception.get_type();
+                    if (resultType != sol::type::nil) {
+                        if (resultType == sol::lua_type_of_v<Exceptions::WrappedGenericException>) {
+                            exception.get<Exceptions::WrappedGenericException>().ThrowIfNotNull();
+                        }
+                    }
+                }
+            };
+
+        m_InstructionProcessorMap =
+                std::make_shared<const std::unordered_map<
+                    std::string,
+                    std::function<void(SourceCompiler &)>>>(std::move(instructionProcessorMap));
     }
 
     void Compiler::InitLinker(const YAML::Node &config) {
         auto linkerName = ParseConfigOptional<std::string>(config, "LinkerName")
-            .value_or("Linker");
+                .value_or("Linker");
 
         m_Linker = [linkerName](SourceCompiler &compiler) {
-            const auto& state = *compiler.m_SharedState;
+            const auto &state = *compiler.m_SharedState;
             sol::function linkerFunction = state[linkerName];
             if (!linkerFunction.valid()) {
                 throw std::runtime_error("Linker function not found: " + linkerName);

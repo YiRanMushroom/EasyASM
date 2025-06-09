@@ -55,7 +55,7 @@ namespace Core {
         void WriteNumber(uint64_t number, size_t bits);
         size_t GetBitBufferSize() const;
 
-        void CompileOneLine();
+        bool CompileOneLine();
 
     public:
         std::shared_ptr<sol::state> m_SharedState;

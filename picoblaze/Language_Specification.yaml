@@ -8,3 +8,5 @@ InstructionToLuaFunctionNameMap: {
     "ADD": "ProcessAdd",
     "SUB": "ProcessSub",
 }
+
+NonInstructionHandlerName: "ProcessNonInstruction"

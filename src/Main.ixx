@@ -11,6 +11,7 @@ export int main() {
     std::filesystem::path picoblazeRootDir = "../../picoblaze";
     std::string source = R"(
         ; Example Picoblaze source code
+        TestNonIns
         add 0, 1
     )";
     try {
