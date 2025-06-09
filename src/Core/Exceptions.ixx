@@ -50,7 +50,7 @@ namespace Core::Exceptions {
                         "Unhandled exception detected, this is generally a bug in the compiler. Please report this issue to your compiler vendor.\n"
                         "The Exception is: {}\n",
                         WrappedException->what());
-                    std::terminate();
+                    std::exit(-1);
                 }
             }
         };
