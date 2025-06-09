@@ -1,6 +1,14 @@
 ;;; Example Picoblaze source code
-TestNonIns:
     add s1, 23
-    add s2, s1
+;CONSTANT cbb1, 00
+;    jump nz, TestNonIns
+
+namereg sf, my_reg
+namereg my_reg, my_reg2
+
+TestNonIns:
     jump TestNonIns
-    jump nz, TestNonIns
+    jump 001
+address 009
+    add my_reg2, ff
+    add S1, ff

@@ -1,6 +1,8 @@
 InstructionToLuaFunctionNameMap: {
     "ADD": "ProcessAdd",
     "JUMP": "ProcessJump",
+    "NAMEREG": "ParseNameReg",
+    "ADDRESS": "ParseAddress",
 }
 
 NonInstructionHandlerName: "ProcessNonInstruction"

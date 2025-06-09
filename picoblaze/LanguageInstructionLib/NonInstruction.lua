@@ -1,30 +1,35 @@
 function AddLabel(compiler, label)
---     print("Adding label: " .. label)
     local linkerContext = compiler:GetLinkerContext()
     if linkerContext.LabelToAddressMap[label] ~= nil then
-        return Exception.MakeCompileError(
+        return Exception.MakeCompileErrorWithLocation(
+            compiler:GetTokenStream(),
             "Label '" .. label .. "' is already defined."
         )
     end
 
-    linkerContext.LabelToAddressMap[label] = compiler:GetBitBufferSize()
+    linkerContext.LabelToAddressMap[label] = compiler:GetBitBufferSize() / 18
 end
 
 function ProcessNonInstruction(compiler)
     local tokenStream = compiler:GetTokenStream()
     local thisToken = tokenStream:ParseCurrent()
---     print("Processing non-instruction token: " .. tostring(thisToken))
     if thisToken == nil then
-        return Exception.MakeCompilerImplementationError("No token found in the token stream.")
+        return Exception.MakeCompilerImplementationErrorWithLocation(
+            tokenStream,
+            "No token found in the token stream."
+        )
     end
     local nextToken = tokenStream:ParseCurrent()
---     print("Next token after non-instruction token: " .. tostring(nextToken))
     if nextToken == nil then
-        return Exception.MakeCompilerImplementationError("No next token found in the token stream.")
+        return Exception.MakeCompilerImplementationErrorWithLocation(
+            tokenStream,
+            "No next token found in the token stream."
+        )
     end
 
     if nextToken ~= ":" then
-        return Exception.MakeCompileError(
+        return Exception.MakeCompileErrorWithLocation(
+            tokenStream,
             "Expected ':' after label, but found '" .. nextToken .. "' instead."
         )
     end

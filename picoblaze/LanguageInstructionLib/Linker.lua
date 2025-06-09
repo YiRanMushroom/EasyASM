@@ -1,15 +1,14 @@
 function Linker(compiler)
 
     local linkerContext = compiler:GetLinkerContext()
-    local linkRequestArray = linkerContext.LinkRequestArray
+    local LinkAddressRequestArray = linkerContext.LinkAddressRequestArray
     local labelToAddressMap = linkerContext.LabelToAddressMap
 
---     print("Linker: Processing " .. #linkRequestArray .. " link requests.")
-
-    for i = 1, #linkRequestArray do
-        local request = linkRequestArray[i]
+    for i = 1, #LinkAddressRequestArray do
+        local request = LinkAddressRequestArray[i]
         local label = request.Label
         local start = request.Start
+        local size = request.Size
 
         -- Find the address of the label
         local address = labelToAddressMap[label]

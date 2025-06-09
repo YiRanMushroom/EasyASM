@@ -1,5 +1,4 @@
 function ProcessAdd(compiler)
---     print("Processing ADD operation")
     local callResult = Util.WriteSimpleImmediateOrRegister(compiler)
     if callResult ~= nil then
         return callResult

@@ -7,8 +7,17 @@ function ProcessJump(compiler)
 
     local thisToken, conditionToWrite = Util.GetPossibleCondition(tokenStream, thisToken)
 
-    Util.WriteDummyAddress(compiler, thisToken)
---     print("ProcessJump: Writing dummy address for label '" .. thisToken .. "'")
+    local Address = Lib.ParseSimpleUnsigned(tokenStream, thisToken)
+    if Address == nil then
+        Util.WriteDummyAddress(compiler, thisToken)
+    elseif Address >= 0 and Address <= 1023 then
+        compiler:WriteUnsignedNumber(Address, 10)
+    else
+        return Exception.MakeCompileErrorWithLocation(
+            tokenStream,
+            "Address value '" .. Address .. "' is out of range. Expected a value between 0 and 1023."
+        )
+    end
     compiler:WriteUnsignedNumber(conditionToWrite, 3)
     compiler:WriteUnsignedNumber(26, 5)
 end

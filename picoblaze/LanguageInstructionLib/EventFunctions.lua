@@ -1,7 +1,7 @@
 function OnBeforeCompile(compiler)
-    compiler:GetLinkerContext().LinkRequestArray = {}
+    compiler:GetCompilerContext().RegNameArray = {}
+    compiler:GetLinkerContext().LinkAddressRequestArray = {}
     compiler:GetLinkerContext().LabelToAddressMap = {}
-
 end
 
 function OnBeforeLink(compiler)
