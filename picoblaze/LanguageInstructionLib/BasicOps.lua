@@ -1,5 +1,7 @@
 function ProcessAdd(compiler)
-    Exception.ThrowCompilerImplementationError("Test throw")
+    return Exception.MakeCompilerImplementationError(
+        "Add operation is not supported in this version of the compiler."
+    )
 end
 
 function ProcessSub(tokens)

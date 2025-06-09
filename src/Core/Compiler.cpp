@@ -3,6 +3,7 @@ module Core.Compiler;
 import std;
 import Core.Lib;
 import <cassert>;
+import Core.Exceptions;
 
 namespace Core {
     void SourceCompiler::AddLibToState(sol::state &state) {
@@ -117,10 +118,19 @@ namespace Core {
                             if (!function.valid()) {
                                 throw std::runtime_error("Function not found: " + value);
                             }
-                            auto result = function(compiler);
-                            if (!result.valid()) {
-                                sol::error err = result;
-                                throw std::runtime_error("Error in function '" + value + "': " + err.what());
+                            auto exception = function(compiler);
+                            if (!exception.valid()) {
+                                sol::error err = exception;
+                                throw std::runtime_error(
+                                    "Error executing function '" + value + "': " +
+                                    std::string(err.what()));
+                            } else {
+                                sol::type resultType = exception.get_type();
+                                if (resultType != sol::type::nil) {
+                                    if (resultType == sol::lua_type_of_v<Exceptions::WrappedGenericException>) {
+                                        exception.get<Exceptions::WrappedGenericException>().ThrowIfNotNull();
+                                    }
+                                }
                             }
                         };
                 }

@@ -1,11 +1,6 @@
-module;
-
-#define SOL_EXCEPTIONS_SAFE_PROPAGATION 1
-#include <sol/sol.hpp>
-
 export module Main;
 
-// import Vendor.sol;
+import Vendor.sol;
 import Vendor.yaml;
 import <cassert>;
 
@@ -25,8 +20,9 @@ export int main() {
 
         sourceCompiler.CompileOneLine();
 
-    } catch (const std::exception &e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    } catch (std::exception &e) {
+        std::cerr << std::format("Compilation failed due to an error:\n{}\n",
+                                 e.what());
     }
 
     return 0;
