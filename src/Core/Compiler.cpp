@@ -94,11 +94,12 @@ namespace Core {
             return true;
 
         auto unwrapped = std::move(token.value());
-        if (!m_NameToFunctionMap->contains(unwrapped)) {
+        auto lower = Lib::ToLowerCase(unwrapped);
+        if (!m_NameToFunctionMap->contains(lower)) {
             m_NameToFunctionMap->at("Compiler@NonInstructionHandler")(*this);
         } else {
             m_TokenStream.SkipCurrent();
-            m_NameToFunctionMap->at(unwrapped)(*this);
+            m_NameToFunctionMap->at(lower)(*this);
         }
 
         return false;

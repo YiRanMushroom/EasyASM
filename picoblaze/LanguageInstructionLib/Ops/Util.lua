@@ -41,11 +41,12 @@ function Util.WriteSimpleImmediateOrRegister(compiler)
 
     if regSecond == nil then
         -- an immediate value
-        local immValue = Lib.ParseUnsigned(compiler, thisToken)
-        if type(immValue) ~= "number" then
-            return immValue
+        local immValue = Lib.ParseSimpleUnsigned(compiler, thisToken)
+        if immValue == nil or immValue < 0 or immValue > 255 then
+            Util.WriteDummyConstantData(compiler, thisToken)
+        else
+            compiler:WriteUnsignedNumber(immValue, 8)
         end
-        compiler:WriteUnsignedNumber(immValue, 8)
         compiler:WriteUnsignedNumber(regFirst, 4)
         compiler:WriteUnsignedNumber(0, 1)
         return nil
@@ -59,8 +60,6 @@ function Util.WriteSimpleImmediateOrRegister(compiler)
         return nil
     end
 
---     print("Util: Error writing immediate or register for s" .. regFirst .. " with second operand '" .. thisToken .. "'")
-
     return Exception.MakeCompileErrorWithLocation(
         tokenStream,
         "Invalid second operand: '" .. thisToken .. "'. Expected a register or an immediate value."
@@ -73,6 +72,16 @@ function Util.WriteDummyAddress(compiler, label)
     local linkerContext = compiler:GetLinkerContext()
     linkerContext.LinkAddressRequestArray[#linkerContext.LinkAddressRequestArray + 1] = {
         Label = label,
+        Start = currentStart,
+    }
+end
+
+function Util.WriteDummyConstantData(compiler, constantName)
+    local currentStart = compiler:GetBitBufferSize()
+    compiler:WriteUnsignedNumber(0, 8) -- Dummy value
+    local linkerContext = compiler:GetLinkerContext()
+    linkerContext.LinkConstantRequestArray[#linkerContext.LinkConstantRequestArray + 1] = {
+        ConstantName = constantName,
         Start = currentStart,
     }
 end

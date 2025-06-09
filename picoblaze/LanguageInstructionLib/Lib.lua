@@ -18,10 +18,7 @@ function Lib.ParseRegister(compiler, str)
     result = Lib.ParseSimpleRegister(tokenStream, str)
     if result ~= nil then
         if RegNameArray[result] ~= nil then
-            return Exception.MakeCompileErrorWithLocation(
-                tokenStream,
-                "Register '" .. str .. "' is already defined as '" .. RegNameArray[result] .. "'."
-            )
+            return nil
         end
 
         return result
@@ -45,16 +42,7 @@ function Lib.ParseSimpleUnsigned(tokenStream, str) -- 8 bit unsigned immediate v
     return tonumber(str, 16)
 end
 
-function Lib.ParseUnsigned(compiler, str)
-    local result = Lib.ParseSimpleUnsigned(compiler:GetTokenStream(),  str)
-    if result == nil or result < 0 or result > 255 then
-        return Exception.MakeCompileErrorWithLocation(
-            compiler:GetTokenStream(),
-            "Invalid unsigned immediate value: '" .. str .. "'. Expected a value between 0 and 255."
-        )
-    end
-    return result
-end
+
 
 function Exception.MakeCompileErrorWithLocation(tokenStream, message)
     local position = tokenStream:GetApproxCurrentLocation()
