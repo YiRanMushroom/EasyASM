@@ -40,10 +40,13 @@ target_compile_definitions(
         SOL_EXCEPTIONS_SAFE_PROPAGATION
 )
 
+add_subdirectory(vendor/args)
+
 target_link_libraries(
         ${PROJECT_NAME}
         PUBLIC
         libluajit
         sol2::sol2
         yaml-cpp
+        taywee::args
 )

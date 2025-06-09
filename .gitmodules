@@ -10,3 +10,7 @@
 	path = vendor/sol2
 	url = https://github.com/YiRanMushroom/sol2
 	branch = main
+[submodule "vendor/args"]
+	path = vendor/args
+	url = https://github.com/Taywee/args
+	branch = master

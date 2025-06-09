@@ -6,27 +6,27 @@ import <cassert>;
 
 import Core.Compiler;
 import std;
+import FindPaths;
 
-export int main() {
-    std::filesystem::path picoblazeRootDir = "../../picoblaze";
-    auto sourceFile = std::ifstream("../../tests/pracPICO.psm");
-    std::string source((std::istreambuf_iterator<char>(sourceFile)),
-                 std::istreambuf_iterator<char>());
+export int main(int argc, char *argv[]) {
+    ProgramPaths paths{argc, argv};
     try {
-        auto compiler = Core::Compiler{picoblazeRootDir};
+        Core::Compiler compiler{paths.GetLanguageRootDir()};
+        auto sourceFile = std::ifstream(paths.GetSourceFilePath());
+        std::string source((std::istreambuf_iterator<char>(sourceFile)),
+             std::istreambuf_iterator<char>());
 
-        auto sourceCompiler = compiler.CreateSourceCompiler(source);
-
+        Core::SourceCompiler sourceCompiler{compiler.CreateSourceCompiler(source)};
         sourceCompiler.CompileAll();
         sourceCompiler.Link();
-        std::ofstream outputFile("result.txt");
-
+        std::ofstream outputFile(paths.GetOutputDir() / paths.GetOutputFileName());
         outputFile << sourceCompiler.GenerateOutput();
-
-        std::cout << std::format("Compilation successful. Output written to result.txt\n");
-    } catch (std::exception &e) {
+        std::cout << std::format("Compilation successful. Output written to {}\n",
+                         (paths.GetOutputDir() / paths.GetOutputFileName()).string());
+    } catch (const std::exception &e) {
         std::cerr << std::format("Compilation failed due to an error:\n{}\n",
-                                 e.what());
+                         e.what());
+        return 1;
     }
 
     return 0;
