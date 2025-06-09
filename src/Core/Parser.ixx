@@ -23,6 +23,7 @@ namespace Core {
         std::string GetApproxCurrentLocation();
         std::optional<Exceptions::WrappedGenericException> AssertIsNewLine();
         void SetNewLine(bool isNewLine);
+        bool IsNewLine() const { return m_IsNewLine; }
 
         static void AddLibToState(sol::state& state) {
             state.new_usertype<TokenStream>("TokenStream",
@@ -32,7 +33,8 @@ namespace Core {
                 "SkipCurrent", &TokenStream::SkipCurrent,
                 "GetApproxCurrentLocation", &TokenStream::GetApproxCurrentLocation,
                 "AssertIsNewLine", &TokenStream::AssertIsNewLine,
-                "SetNewLine", &TokenStream::SetNewLine
+                "SetNewLine", &TokenStream::SetNewLine,
+                "IsNewLine", &TokenStream::IsNewLine
             );
         }
 

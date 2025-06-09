@@ -12,3 +12,35 @@ TestNonIns:
 address 009
     add my_reg2, ff
     add S1, cbb1
+    addcy s3, f1
+    and s3, s0
+    call TestNonIns
+    compare s1, s2
+    disable interrupt
+    enable interrupt
+    fetch s1, cbb1
+    input s1, 0
+    load s1, 0
+    or s1, s2
+    output s1, 0
+    return
+    return c
+    return nc
+    return z
+    return nz
+    returni enable
+    rl s1
+    rr s2
+    sl0 s3
+    sl1 s1
+    sla s2
+    slx s3
+    sr0 s3
+    sr1 s1
+    sra s2
+    srx s3
+    store s1, 0
+    sub s1, s2
+    subcy s2, s1
+    test s1, s2
+    xor s1, s2

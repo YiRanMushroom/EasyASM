@@ -52,7 +52,7 @@ function Util.WriteSimpleImmediateOrRegister(compiler)
         return nil
     end
 
-    if type(regSecond) ~= "number" then
+    if type(regSecond) == "number" then
         compiler:WriteUnsignedNumber(0, 4)
         compiler:WriteUnsignedNumber(regSecond, 4)
         compiler:WriteUnsignedNumber(regFirst, 4)

@@ -42,8 +42,6 @@ function Lib.ParseSimpleUnsigned(tokenStream, str) -- 8 bit unsigned immediate v
     return tonumber(str, 16)
 end
 
-
-
 function Exception.MakeCompileErrorWithLocation(tokenStream, message)
     local position = tokenStream:GetApproxCurrentLocation()
     return Exception.MakeCompileError(
