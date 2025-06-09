@@ -2,12 +2,13 @@ export module Core.Parser;
 
 import std;
 import Vendor.sol;
+import Core.Exceptions;
 
 namespace Core {
     export class TokenStream {
     public:
         TokenStream(const std::string& source)
-            : source(source), current(this->source.begin()) {
+            : m_Source(source), m_Current(this->m_Source.begin()) {
             SkipToNextToken();
         }
 
@@ -20,7 +21,8 @@ namespace Core {
         std::optional<std::string> PeekCurrent();
         void SkipCurrent();
         std::string GetApproxCurrentLocation();
-
+        std::optional<Exceptions::WrappedGenericException> AssertIsNewLine();
+        void SetNewLine(bool isNewLine);
 
         static void AddLibToState(sol::state& state) {
             state.new_usertype<TokenStream>("TokenStream",
@@ -28,7 +30,9 @@ namespace Core {
                 "ParseCurrent", &TokenStream::ParseCurrent,
                 "PeekCurrent", &TokenStream::PeekCurrent,
                 "SkipCurrent", &TokenStream::SkipCurrent,
-                "GetApproxCurrentLocation", &TokenStream::GetApproxCurrentLocation
+                "GetApproxCurrentLocation", &TokenStream::GetApproxCurrentLocation,
+                "AssertIsNewLine", &TokenStream::AssertIsNewLine,
+                "SetNewLine", &TokenStream::SetNewLine
             );
         }
 
@@ -37,8 +41,9 @@ namespace Core {
         void SkipToNextToken();
         std::optional<std::string> ParseString();
 
-        std::string source;
-        std::string::const_iterator current;
-        size_t numberOfLines = 1;
+        std::string m_Source;
+        std::string::const_iterator m_Current;
+        size_t m_NumberOfLines = 1;
+        bool m_IsNewLine = true;
     };
 }

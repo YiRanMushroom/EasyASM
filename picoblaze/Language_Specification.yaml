@@ -1,9 +1,3 @@
-PerInstructionBits: 8
-
-MacroDefineTokens: [
-  "CONSTANT"
-]
-
 InstructionToLuaFunctionNameMap: {
     "ADD": "ProcessAdd",
     "SUB": "ProcessSub",
@@ -11,3 +5,7 @@ InstructionToLuaFunctionNameMap: {
 
 NonInstructionHandlerName: "ProcessNonInstruction"
 LinkerName: "Linker"
+BeforeCompileFunctionName: "OnBeforeCompile"
+BeforeLinkFunctionName: "OnBeforeLink"
+AfterLinkFunctionName: "OnAfterLink"
+StartAddressAlignment: 18 # PicoBlaze is wierd and uses 18-bit addresses
