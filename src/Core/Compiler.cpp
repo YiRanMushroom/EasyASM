@@ -175,7 +175,7 @@ namespace Core {
         }
     }
 
-    void HandlePossibleLuaError(const sol::protected_function_result &exception, const std::string &value) {
+    void HandlePossibleLuaError(const auto &exception, const std::string &value) {
         if (exception.get_type() == sol::lua_type_of_v<Exceptions::WrappedGenericException>) {
             exception.get<Exceptions::WrappedGenericException>().ThrowIfNotNull();
         } else {
@@ -195,7 +195,7 @@ namespace Core {
         }
     }
 
-    void CheckResultValid(const sol::protected_function_result &result, const std::string &functionName) {
+    void CheckResultValid(const auto &result, const std::string &functionName) {
         if (!result.valid()) {
             sol::error err = result;
             throw Exceptions::CompilerImplementationError(
