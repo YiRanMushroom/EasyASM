@@ -21,7 +21,8 @@ namespace Core {
                                            "WriteSignedNumber", &SourceCompiler::WriteSignedNumber,
                                            "WriteUnsignedNumber", &SourceCompiler::WriteUnsignedNumber,
                                            "GetBitBufferSize", &SourceCompiler::GetBitBufferSize,
-                                           "AlignStartAddress", &SourceCompiler::AlignStartAddress
+                                           "AlignStartAddress", &SourceCompiler::AlignStartAddress,
+                                           "ReplaceUnsignedNumber", &SourceCompiler::ReplaceUnsignedNumber
         );
     }
 
@@ -39,15 +40,15 @@ namespace Core {
 
         if (number < min_value || number > max_value) {
             throw Exceptions::CompileError(
-                std::format(
-                    "Compile Error({}): Signed number {} exceeds the bit limit of {} bits (valid range: [{}, {}])",
-                    m_TokenStream.GetApproxCurrentLocation(), number, bits, min_value, max_value));
+                std::format("Compile Error({}): Signed number {} exceeds the bit limit of {} bits (valid range: [{}, {}])",
+                            m_TokenStream.GetApproxCurrentLocation(), number, bits, min_value, max_value));
         }
 
+        // Two's complement encoding, masked to lower 'bits' bits
         uint64_t encoded = static_cast<uint64_t>(number) & ((1ull << bits) - 1);
 
         for (size_t i = 0; i < bits; ++i) {
-            m_BitBuffer.push_back((encoded >> (bits - 1 - i)) & 1);
+            m_BitBuffer.push_back((encoded >> i) & 1);  // LSB first
         }
     }
 
@@ -59,7 +60,26 @@ namespace Core {
         }
 
         for (size_t i = 0; i < bits; ++i) {
-            m_BitBuffer.push_back((number >> (bits - 1 - i)) & 1);
+            bool bit = (number >> i) & 1;  // LSB first
+            m_BitBuffer.push_back(bit);
+        }
+    }
+
+    void SourceCompiler::ReplaceUnsignedNumber(uint64_t number, size_t bits, size_t startIndex) {
+        if (number >= (1ull << bits)) {
+            throw Exceptions::CompileError(
+                std::format("Compile Error({}): Number {} exceeds the bit limit of {} bits",
+                            m_TokenStream.GetApproxCurrentLocation(), number, bits));
+        }
+
+        if (startIndex + bits > m_BitBuffer.size()) {
+            throw Exceptions::CompileError(
+                std::format("Compile Error({}): Attempted to replace bits beyond the current buffer size",
+                            m_TokenStream.GetApproxCurrentLocation()));
+        }
+
+        for (size_t i = 0; i < bits; ++i) {
+            m_BitBuffer[startIndex + i] = (number >> i) & 1;  // LSB first
         }
     }
 
@@ -136,7 +156,7 @@ namespace Core {
 
     std::shared_ptr<sol::state> Compiler::CreateSharedState() {
         auto state = std::make_shared<sol::state>(sol::state{});
-        state->open_libraries(sol::lib::base, sol::lib::package, sol::lib::string);
+        state->open_libraries(sol::lib::base, sol::lib::package, sol::lib::string, sol::lib::bit32);
 
         SourceCompiler::AddLibToState(*state);
 
@@ -248,6 +268,7 @@ namespace Core {
 
                     if (result.get_type() == sol::type::string) {
                         compiler.m_Output = result.get<std::string>();
+                        return;
                     }
 
                     HandlePossibleLuaError(result, outputFunctionName);

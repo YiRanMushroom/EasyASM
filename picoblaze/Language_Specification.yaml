@@ -1,6 +1,6 @@
 InstructionToLuaFunctionNameMap: {
     "ADD": "ProcessAdd",
-    "SUB": "ProcessSub",
+    "JUMP": "ProcessJump",
 }
 
 NonInstructionHandlerName: "ProcessNonInstruction"
@@ -9,3 +9,4 @@ BeforeCompileFunctionName: "OnBeforeCompile"
 BeforeLinkFunctionName: "OnBeforeLink"
 AfterLinkFunctionName: "OnAfterLink"
 StartAddressAlignment: 18 # PicoBlaze is wierd and uses 18-bit addresses
+OutputFunctionName: "GenerateOutput"

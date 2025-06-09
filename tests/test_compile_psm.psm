@@ -1,0 +1,6 @@
+;;; Example Picoblaze source code
+TestNonIns:
+    add s1, 23
+    add s2, s1
+    jump TestNonIns
+    jump nz, TestNonIns

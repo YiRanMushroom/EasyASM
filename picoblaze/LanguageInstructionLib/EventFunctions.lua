@@ -1,11 +1,11 @@
 function OnBeforeCompile(compiler)
-    print("OnBeforeCompile called")
+    compiler:GetLinkerContext().LinkRequestArray = {}
+    compiler:GetLinkerContext().LabelToAddressMap = {}
+
 end
 
 function OnBeforeLink(compiler)
-    print("OnBeforeLink called")
 end
 
 function OnAfterLink(compiler)
-    print("OnAfterLink called")
 end

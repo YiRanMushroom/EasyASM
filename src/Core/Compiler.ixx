@@ -29,7 +29,10 @@ namespace Core {
               m_NameToFunctionMap(std::move(instructionProcessorMap)),
               m_TokenStream(std::move(source)),
               m_StartAddressAlignment(startAddressAlignment),
-              m_SharedConfig(std::move(sharedConfig)) {}
+              m_SharedConfig(std::move(sharedConfig)) {
+            m_CompilerContext = m_SharedState->create_table();
+            m_LinkerContext = m_SharedState->create_table();
+        }
 
         static void AddLibToState(sol::state &state);
 
@@ -47,7 +50,7 @@ namespace Core {
         }
 
     public:
-        std::vector<bool> &GetBitBuffer() {
+        std::vector<uint8_t> &GetBitBuffer() {
             return m_BitBuffer;
         }
 
@@ -58,6 +61,8 @@ namespace Core {
         void WriteSignedNumber(int64_t number, size_t bits);
 
         void WriteUnsignedNumber(uint64_t number, size_t bits);
+
+        void ReplaceUnsignedNumber(uint64_t number, size_t bits, size_t startIndex);
 
         size_t GetBitBufferSize() const;
 
@@ -82,7 +87,7 @@ namespace Core {
         sol::table m_LinkerContext;
         TokenStream m_TokenStream;
 
-        std::vector<bool> m_BitBuffer;
+        std::vector<uint8_t> m_BitBuffer;
         size_t m_StartAddressAlignment; // default alignment
         std::shared_ptr<YAML::Node> m_SharedConfig;
         std::optional<std::string> m_Output;
