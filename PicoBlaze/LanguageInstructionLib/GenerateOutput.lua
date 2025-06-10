@@ -2,7 +2,7 @@ function GenerateOutput(compiler)
     local instructionBitsCount = compiler:GetBitBufferSize()
     if instructionBitsCount % 18 ~= 0 then
         return Exception.MakeCompilerImplementationError(
-            "The number of bits in the instruction buffer is not a multiple of 18. This is a bug in the compiler implementation, please report this to your compiler vendor."
+            "The number of bits in the instruction buffer is not a multiple of 18."
         )
     end
 

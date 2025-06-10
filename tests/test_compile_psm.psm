@@ -44,3 +44,5 @@ address 009
     subcy s2, s1
     test s1, s2
     xor s1, s2
+    subdir
+    add s1, s2

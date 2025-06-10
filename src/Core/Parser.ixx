@@ -42,6 +42,7 @@ namespace Core {
         void SkipWhitespace();
         void SkipToNextToken();
         std::optional<std::string> ParseString();
+        std::optional<std::string> m_LastToken;
 
         std::string m_Source;
         std::string::const_iterator m_Current;

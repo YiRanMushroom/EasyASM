@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/LuaJIT" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/args" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/sol2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/yaml-cpp" vcs="Git" />
   </component>

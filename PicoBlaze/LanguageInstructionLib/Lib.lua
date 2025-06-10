@@ -59,6 +59,6 @@ end
 function Exception.MakeCompilerImplementationErrorWithLocation(tokenStream, message)
     local position = tokenStream:GetApproxCurrentLocation()
     return Exception.MakeCompilerImplementationError(
-        "Compiler Implementation Error " .. position .. ": " .. message
+        "Compiler Implementation Error " .. position .. ": " .. message .. ' This is a bug in the compiler implementation, please report this to your compiler vendor.'
     )
 end

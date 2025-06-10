@@ -6,8 +6,9 @@ import <args.hxx>;
 export class ProgramPaths {
 public:
     ProgramPaths(int argc, char* argv[]) {
-        args::ArgumentParser parser("Allowed command for EasyASM",
-                                    "This program compiles and links ASM source files.");
+        args::ArgumentParser parser(
+    "A simple assembler architecture",
+    "Usage example:\n  EasyASM -l ../../PicoBlaze -i ../../tests/test_compile_psm.psm -o ./out");
         args::HelpFlag help(parser, "help", "Display this help menu", {'h', "help"});
         args::ValueFlag<std::string> languageRootDirFlag(
             parser, "languageRootDir", "Path to the library root directory of the language",
@@ -29,15 +30,21 @@ public:
             std::exit(1);
         }
 
+        if (!languageRootDirFlag || !sourceFilePathFlag) {
+            std::cerr << "Error: Missing required arguments.\n";
+            parser.Help(std::cout);
+            std::exit(1);
+        }
         std::string languageRootDirStr = args::get(languageRootDirFlag);
         languageRootDir = std::filesystem::path(languageRootDirStr);
-        if (!languageRootDirFlag || !std::filesystem::exists(languageRootDir)) {
+
+        if (!std::filesystem::exists(languageRootDir)) {
             std::cerr << "Error: Language root directory does not exist: " << languageRootDirStr << "\n";
             std::exit(1);
         }
         std::string sourceFilePathStr = args::get(sourceFilePathFlag);
         sourceFilePath = std::filesystem::path(sourceFilePathStr);
-        if (!sourceFilePathFlag || !std::filesystem::exists(sourceFilePath)) {
+        if (!std::filesystem::exists(sourceFilePath)) {
             std::cerr << "Error: Source file does not exist: " << sourceFilePathStr << "\n";
             std::exit(1);
         }

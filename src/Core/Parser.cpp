@@ -16,7 +16,7 @@ namespace Core {
         m_IsNewLine = false; // reset newline state
 
         if (*m_Current == '\"') {
-            return ParseString();
+            return m_LastToken = ParseString();
         }
 
         if (delimiters.contains(*m_Current)) {
@@ -37,14 +37,16 @@ namespace Core {
 
         SkipToNextToken();
 
-        return buffer; // return the parsed token
+        return m_LastToken = std::move(buffer); // return the parsed token
     }
 
     std::optional<std::string> TokenStream::PeekCurrent() {
         auto savedCurrent = m_Current; // save the current position
         auto savedNumberOfLines = m_NumberOfLines; // save the current line count
         auto savedIsNewLine = m_IsNewLine; // save the current newline state
+        auto savedLastToken = m_LastToken; // save the last token
         auto token = ParseCurrent(); // parse the current token
+        m_LastToken = savedLastToken; // restore the last token
         m_IsNewLine = savedIsNewLine; // restore the newline state
         m_NumberOfLines = savedNumberOfLines; // restore the line count
         m_Current = savedCurrent; // restore the current position
@@ -58,12 +60,13 @@ namespace Core {
 
     std::string TokenStream::GetApproxCurrentLocation() {
         // Approximate location is the number of lines and the current position in the source
-        auto next = PeekCurrent();
-        if (next) {
-            return std::format("At line {}, near token '{}'", m_NumberOfLines, *next);
-        } else {
-            return std::format("At line {}, end of source", m_NumberOfLines);
+        std::optional<std::string> TokenToDisplay = m_LastToken ? m_LastToken : PeekCurrent();
+        if (TokenToDisplay) {
+            return std::format("At line {}, near token '{}'",
+                               m_IsNewLine ? m_NumberOfLines - 1 : m_NumberOfLines,
+                               *TokenToDisplay);
         }
+        return std::format("At line {}, no valid token near this place", m_IsNewLine? m_NumberOfLines - 1 : m_NumberOfLines);
     }
 
     std::optional<Exceptions::WrappedGenericException> TokenStream::AssertIsNewLine() {
@@ -140,6 +143,6 @@ namespace Core {
 
         SkipToNextToken(); // skip to the next token after the string
 
-        return buffer; // return the parsed string
+        return  buffer; // return the parsed string
     }
 }
