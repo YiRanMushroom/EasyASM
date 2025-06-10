@@ -31,8 +31,8 @@ public:
         }
 
         if (!languageRootDirFlag || !sourceFilePathFlag) {
-            std::cerr << "Error: Missing required arguments.\n";
-            parser.Help(std::cout);
+            std::cerr << "Error: Missing required arguments." << std::endl;
+            parser.Help(std::cerr);
             std::exit(1);
         }
         std::string languageRootDirStr = args::get(languageRootDirFlag);
