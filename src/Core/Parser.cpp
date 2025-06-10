@@ -14,6 +14,7 @@ namespace Core {
         assert(!whitespace.contains(*m_Current) && "Current character should not be whitespace");
 
         m_IsNewLine = false; // reset newline state
+        m_PreviousNumberOfLines = m_NumberOfLines; // save the previous line count
 
         if (*m_Current == '\"') {
             return m_LastToken = ParseString();
@@ -45,7 +46,9 @@ namespace Core {
         auto savedNumberOfLines = m_NumberOfLines; // save the current line count
         auto savedIsNewLine = m_IsNewLine; // save the current newline state
         auto savedLastToken = m_LastToken; // save the last token
+        auto savedPreviousNumberOfLines = m_PreviousNumberOfLines; // save the previous line count
         auto token = ParseCurrent(); // parse the current token
+        m_PreviousNumberOfLines = savedPreviousNumberOfLines; // restore the previous line count
         m_LastToken = savedLastToken; // restore the last token
         m_IsNewLine = savedIsNewLine; // restore the newline state
         m_NumberOfLines = savedNumberOfLines; // restore the line count
@@ -62,11 +65,11 @@ namespace Core {
         // Approximate location is the number of lines and the current position in the source
         std::optional<std::string> TokenToDisplay = m_LastToken ? m_LastToken : PeekCurrent();
         if (TokenToDisplay) {
-            return std::format("At line {}, near token '{}'",
-                               m_IsNewLine ? m_NumberOfLines - 1 : m_NumberOfLines,
+            return std::format("at line {}, near token '{}'",
+                               m_PreviousNumberOfLines,
                                *TokenToDisplay);
         }
-        return std::format("At line {}, no valid token near this place", m_IsNewLine? m_NumberOfLines - 1 : m_NumberOfLines);
+        return std::format("at line {}, no valid token near this place", m_PreviousNumberOfLines);
     }
 
     std::optional<Exceptions::WrappedGenericException> TokenStream::AssertIsNewLine() {

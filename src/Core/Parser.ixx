@@ -47,6 +47,7 @@ namespace Core {
         std::string m_Source;
         std::string::const_iterator m_Current;
         size_t m_NumberOfLines = 1;
+        size_t m_PreviousNumberOfLines = 1;
         bool m_IsNewLine = true;
     };
 }
