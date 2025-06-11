@@ -1,5 +1,5 @@
 function ProcessInput(compiler)
-    local callResult = Util.WriteSimpleImmediateOrRegister(compiler)
+    local callResult = Util.WriteAddressImmediateOrRegister(compiler)
     if callResult ~= nil then
         return callResult
     end

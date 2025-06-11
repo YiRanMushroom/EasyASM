@@ -27,6 +27,9 @@ export int main(int argc, char *argv[]) {
         std::cerr << std::format("Compilation failed due to an error:\n{}\n",
                          e.what());
         return 1;
+    } catch (...) {
+        std::cerr << "Compilation failed due to an unknown error.\n";
+        return 1;
     }
 
     return 0;
