@@ -22,8 +22,10 @@ export int main(int argc, char *argv[]) {
         sourceCompiler.Link();
         std::ofstream outputFile(paths.GetOutputDir() / paths.GetOutputFileName());
         outputFile << sourceCompiler.GenerateOutput();
-        std::cout << std::format("Compilation successful. Output written to {}\n",
-                         (paths.GetOutputDir() / paths.GetOutputFileName()).string());
+        std::u8string u8str = (paths.GetOutputDir() / paths.GetOutputFileName()).u8string();
+        std::string out(reinterpret_cast<const char*>(u8str.c_str()), u8str.size());
+        std::cout << out;
+        std::cout << "Compilation successful. Output written to " << out;
     } catch (const std::exception &e) {
         std::cerr << std::format("Compilation failed due to an error:\n{}\n",
                          e.what());

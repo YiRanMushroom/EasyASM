@@ -40,6 +40,12 @@ target_compile_definitions(
         SOL_EXCEPTIONS_SAFE_PROPAGATION
 )
 
+# use utf-8 encoding
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /utf-8)
+else ()
+endif ()
+
 add_subdirectory(vendor/args)
 
 target_link_libraries(
