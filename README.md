@@ -3,6 +3,11 @@
 **EasyASM** is a general-purpose assembler and linker framework, currently focused on full support for the **Xilinx PicoBlaze** soft-core processor. It aims to be a modern replacement for the legacy DOS-based assembler, with improved usability, error diagnostics, and extensibility.
 
 ## 🔧 Usage
+You can use the UI.exe in the release folder, it provides a graphical interface for assembling PicoBlaze source files.
+
+It is rather straightforward to use. However, if you are having trouble, you can watch the [YouTube tutorial](https://www.youtube.com/watch?v=example) for a step-by-step guide on how to use the EasyASM UI.
+
+Alternatively, you can use the command line interface for automation or scripting purposes.
 
 To assemble a PicoBlaze `.psm` source file and generate a `.mem` output:
 
