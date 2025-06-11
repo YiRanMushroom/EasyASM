@@ -39,8 +39,8 @@ function CheckLabelValid(compiler, token)
         end
     end
 
-    -- if it does not start with a letter or _
-    if not (token:match("^[%a_]")) then
+    -- if it does not start with a letter, _ or a number, it is not a valid label
+    if not (token:match("^[_%a]") or token:match("^[%d]")) then
         return Exception.MakeCompileErrorWithLocation(
             compiler:GetTokenStream(),
             "Label '" .. token .. "' must start with a letter or underscore."
