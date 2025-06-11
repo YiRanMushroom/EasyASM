@@ -18,11 +18,11 @@ address 009
     compare s1, s2
     disable interrupt
     enable interrupt
-    fetch s1, cbb1
+    fetch s1, (my_reg2)
     input s1, 00
     load s1, 00
     or s1, s2
-    output s1, 00
+    output s1, (s2)
     return
     return c
     return nc
@@ -44,5 +44,4 @@ address 009
     subcy s2, s1
     test s1, s2
     xor s1, s2
-    subdir
     add s1, s2
