@@ -7,6 +7,7 @@ import <cassert>;
 import Core.Compiler;
 import std;
 import FindPaths;
+import Core.Exceptions;
 
 export int main(int argc, char *argv[]) {
     ProgramPaths paths{argc, argv};
@@ -26,7 +27,11 @@ export int main(int argc, char *argv[]) {
     } catch (const std::exception &e) {
         std::cerr << std::format("Compilation failed due to an error:\n{}\n",
                          e.what());
-        return 1;
+        if (auto wrapped = dynamic_cast<const Core::Exceptions::WrappedGenericException*>(&e)) {
+            if (auto implementationError = dynamic_cast<const Core::Exceptions::CompilerImplementationError*>(wrapped->GetPointer())) {
+                return -1;
+            }
+        }
     } catch (...) {
         std::cerr << "Compilation failed due to an unknown error.\n";
         return 1;
