@@ -10,6 +10,44 @@ function AddLabel(compiler, label)
     linkerContext.LabelToAddressMap[label] = compiler:GetBitBufferSize() / 18
 end
 
+function CheckLabelValid(compiler, token)
+    if token == nil then
+        return Exception.MakeCompilerImplementationErrorWithLocation(
+            compiler:GetTokenStream(),
+            "Token is nil when checking label validity.")
+    end
+
+    if token == '/' then
+        local tokenStream = compiler:GetTokenStream()
+        local nextToken = tokenStream:PeekCurrent()
+        if nextToken == nil then
+            return Exception.MakeCompilerImplementationErrorWithLocation(
+                tokenStream,
+                "Unexpected Token '/'. No next token found in the token stream."
+            )
+        end
+        if nextToken == '/' then
+            return Exception.MakeCompileErrorWithLocation(
+                tokenStream,
+                "Unexpected Token '//'. Notice that you cannot use '//' for comments in PicoBlaze assembly. Use ';' instead."
+            )
+        else
+            return Exception.MakeCompileErrorWithLocation(
+                tokenStream,
+                "Unexpected Token '/'."
+            )
+        end
+    end
+
+    -- if it does not start with a letter or _
+    if not (token:match("^[%a_]")) then
+        return Exception.MakeCompileErrorWithLocation(
+            compiler:GetTokenStream(),
+            "Label '" .. token .. "' must start with a letter or underscore."
+        )
+    end
+end
+
 function ProcessNonInstruction(compiler)
     local tokenStream = compiler:GetTokenStream()
     local thisToken = tokenStream:ParseCurrent()
@@ -19,6 +57,12 @@ function ProcessNonInstruction(compiler)
             "No token found in the token stream."
         )
     end
+
+    local possibleError = CheckLabelValid(compiler, thisToken)
+    if possibleError ~= nil then
+        return possibleError
+    end
+
     local nextToken = tokenStream:PeekCurrent()
     if nextToken == nil then
         return Exception.MakeCompilerImplementationErrorWithLocation(
