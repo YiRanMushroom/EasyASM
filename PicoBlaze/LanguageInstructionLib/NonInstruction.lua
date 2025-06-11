@@ -43,7 +43,7 @@ function CheckLabelValid(compiler, token)
     if not (token:match("^[_%a]") or token:match("^[%d]")) then
         return Exception.MakeCompileErrorWithLocation(
             compiler:GetTokenStream(),
-            "Label '" .. token .. "' must start with a letter or underscore."
+            "Label '" .. token .. "' must start with a letter, a number, or an underscore (_)."
         )
     end
 end
