@@ -24,8 +24,8 @@ export int main(int argc, char *argv[]) {
         outputFile << sourceCompiler.GenerateOutput();
         std::u8string u8str = (paths.GetOutputDir() / paths.GetOutputFileName()).u8string();
         std::string out(reinterpret_cast<const char*>(u8str.c_str()), u8str.size());
-        std::cout << out;
-        std::cout << "Compilation successful. Output written to " << out;
+        std::cout << "Compilation successful. Output has been written to: "
+                  << out << "\n";
     } catch (const std::exception &e) {
         std::cerr << std::format("Compilation failed due to an error:\n{}\n",
                          e.what());

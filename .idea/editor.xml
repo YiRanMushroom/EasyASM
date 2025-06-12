@@ -5,6 +5,7 @@
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppModulePartitionWithSeveralPartitionUnits/@EntryIndexedValue" value="WARNING" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantFwdClassOrEnumSpecifier/@EntryIndexedValue" value="SUGGESTION" type="string" />
     <option name="/Default/CodeInspection/Highlighting/InspectionSeverities/=CppRedundantQualifierADL/@EntryIndexedValue" value="DO_NOT_SHOW" type="string" />
+    <option name="/Default/CodeStyle/CodeFormatting/CppClangFormat/EnableClangFormatSupport/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_ARGUMENT/@EntryValue" value="true" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_BINARY_EXPRESSIONS_CHAIN/@EntryValue" value="true" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_CALLS_CHAIN/@EntryValue" value="false" type="bool" />
@@ -16,7 +17,6 @@
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTILINE_TYPE_PARAMETER/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_MULTIPLE_DECLARATION/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALIGN_TERNARY/@EntryValue" value="ALIGN_ALL" type="string" />
-    <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ALLOW_COMMENT_AFTER_LBRACE/@EntryValue" value="true" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/ANONYMOUS_METHOD_DECLARATION_BRACES/@EntryValue" value="END_OF_LINE" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/BLANK_LINES_AROUND_CLASS_DEFINITION/@EntryValue" value="1" type="int" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/BLANK_LINES_AROUND_DECLARATIONS/@EntryValue" value="0" type="int" />
@@ -25,8 +25,6 @@
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/BREAK_TEMPLATE_DECLARATION/@EntryValue" value="LINE_BREAK" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/CASE_BLOCK_BRACES/@EntryValue" value="END_OF_LINE" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/CONTINUOUS_LINE_INDENT/@EntryValue" value="Double" type="string" />
-    <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/EMPTY_BLOCK_STYLE/@EntryValue" value="TOGETHER_SAME_LINE" type="string" />
-    <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/EXPORT_DECLARATION_BRACES/@EntryValue" value="END_OF_LINE" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/FREE_BLOCK_BRACES/@EntryValue" value="END_OF_LINE" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/INDENT_ACCESS_SPECIFIERS_FROM_CLASS/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/INDENT_CASE_FROM_SWITCH/@EntryValue" value="true" type="bool" />
@@ -47,6 +45,7 @@
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/OTHER_BRACES/@EntryValue" value="END_OF_LINE" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/PLACE_CATCH_ON_NEW_LINE/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/PLACE_ELSE_ON_NEW_LINE/@EntryValue" value="false" type="bool" />
+    <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/PLACE_NAMESPACE_DEFINITIONS_ON_SAME_LINE/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/PLACE_WHILE_ON_NEW_LINE/@EntryValue" value="false" type="bool" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/REQUIRES_EXPRESSION_BRACES/@EntryValue" value="END_OF_LINE" type="string" />
     <option name="/Default/CodeStyle/CodeFormatting/CppFormatting/SIMPLE_BLOCK_STYLE/@EntryValue" value="DO_NOT_CHANGE" type="string" />
